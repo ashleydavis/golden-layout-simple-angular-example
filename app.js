@@ -1,31 +1,38 @@
 'use strict';
 
-var config = {
-    content: [{
+angular.module( 'userModule', [] )
+    .controller( 'user', function( $scope ){
+        $scope.name = 'John Dee';
+    })
+    .controller( 'userDetails', function( $scope ){
+        $scope.age = 38;
+    });
+
+var myLayout = new GoldenLayout({
+    settings:{
+        hasHeaders: false
+    },
+    content:[{
         type: 'row',
-        content:[{
+        content: [{
             type: 'component',
-            componentName: 'testComponent',
-            componentState: { label: 'A' }
+            componentName: 'template',
+            componentState: { templateId: 'userNameTemplate' }
         },{
-            type: 'column',
-            content:[{
-                type: 'component',
-                componentName: 'testComponent',
-                componentState: { label: 'B' }
-            },{
-                type: 'component',
-                componentName: 'testComponent',
-                componentState: { label: 'C' }
-            }]
+            type: 'component',
+            componentName: 'template',
+            componentState: { templateId: 'userDetailTemplate' }
         }]
     }]
-};
+});
 
-var myLayout = new GoldenLayout( config );
+myLayout.registerComponent( 'template', function( container, state ){
+    var templateHtml = $( '#' + state.templateId ).html();
+    container.getElement().html( templateHtml );
+});
 
-myLayout.registerComponent( 'testComponent', function( container, componentState ){
-    container.getElement().html( '<h2>' + componentState.label + '</h2>' );
+myLayout.on( 'initialised', function(){
+    angular.bootstrap( document.body, [ 'userModule' ]);
 });
 
 myLayout.init();
